@@ -1,3 +1,6 @@
 0.0.1
 - created nest project
 - added login and register functionality
+
+0.0.2
+- added get all user and get user by id apis

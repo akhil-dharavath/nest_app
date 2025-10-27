@@ -47,4 +47,14 @@ export class UsersService {
 
     return user; // Also a Mongoose document
   }
+
+  async getAllUsers() {
+    const users = await this.userModel.find({}).select('-password');
+    return users;
+  }
+
+  async getUserById(id: any) {
+    const users = await this.userModel.findById(id).select('-password');
+    return users;
+  }
 }

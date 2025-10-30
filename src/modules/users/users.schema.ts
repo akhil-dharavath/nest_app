@@ -3,22 +3,35 @@ import { Document } from 'mongoose';
 
 export type UserDocument = User & Document;
 
+export enum UserRole {
+  USER = 'user',
+  ADMIN = 'admin',
+  SUPER_ADMIN = 'super_admin',
+}
+
 @Schema({ timestamps: true, versionKey: false })
 export class User {
-  @Prop({ required: true, unique: true })
+  @Prop()
   username: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop()
   email: string;
 
   @Prop({ required: true })
   password: string;
 
-  @Prop({ default: 'user' })
-  role: string;
+  @Prop({
+    type: String,
+    enum: Object.values(UserRole),
+    default: UserRole.USER,
+  })
+  role: UserRole;
 
-  @Prop({ required: true, unique: true })
+  @Prop()
   phoneNumber: string;
+
+  @Prop()
+  tenent: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

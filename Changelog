@@ -4,3 +4,7 @@
 
 0.0.2
 - added get all user and get user by id apis
+
+0.1.0
+- added dtos, products and merchants
+- added authentication

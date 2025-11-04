@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv';
 import { ConfigModule } from '@nestjs/config';
 import { ProductsModule } from './modules/products/products.module';
 import { MerchantModule } from './modules/merchant/merchant.module';
-import { FirebaseModule } from './firebase/firebase.module';
+// import { FirebaseModule } from './firebase/firebase.module';
 import { ProductionHouseModule } from './modules/productionHouse/production-house.module';
 
 dotenv.config();
@@ -18,7 +18,7 @@ dotenv.config();
     ProductsModule,
     MerchantModule,
     ProductionHouseModule,
-    FirebaseModule,
+    // FirebaseModule,
   ],
 })
 export class AppModule {}

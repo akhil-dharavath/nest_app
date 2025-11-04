@@ -7,11 +7,11 @@ import { AuthModule } from 'src/common/guards/auth.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), // ✅ registers UserModel
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), // registers UserModel
     forwardRef(() => AuthModule),
   ],
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService, MongooseModule], // ✅ export MongooseModule so AuthModule can see UserModel
+  exports: [UsersService, MongooseModule], // export MongooseModule so AuthModule can see UserModel
 })
 export class UsersModule {}

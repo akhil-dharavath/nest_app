@@ -31,7 +31,7 @@ export class User {
   phoneNumber: string;
 
   @Prop()
-  tenent: string;
+  tenant: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

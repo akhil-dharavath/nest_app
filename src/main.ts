@@ -105,19 +105,20 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
 
 async function bootstrap() {
-  // ✅ Load .env before app creation
+  // Load environment variables
   dotenv.config();
 
-  // ✅ Create Nest app with CORS enabled
+  // Create NestJS app
   const app = await NestFactory.create(AppModule, { cors: true });
 
+  // Enable CORS globally
   app.enableCors({
-    origin: '*', // allow all origins (adjust if needed)
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
-  // ✅ Global validation pipes
+  // Global validation
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -126,64 +127,27 @@ async function bootstrap() {
     }),
   );
 
-  // ✅ Optional global prefix (disabled for now)
-  // app.setGlobalPrefix('api');
-
-  // ✅ Swagger configuration
+  // ✅ Always enable Swagger
   const config = new DocumentBuilder()
     .setTitle('API Documentation')
-    .setDescription('Endpoints for Users, Products, and Auth')
-    .setVersion('0.1.2')
+    .setDescription('Endpoints for Users, Products, Merchants, and Auth')
+    .setVersion('1.0.0')
     .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
-  /**
-   * ✅ Enable Swagger only if allowed
-   * Render sets NODE_ENV=production by default,
-   * so we check ENABLE_SWAGGER=true to enable it.
-   */
-  if (
-    process.env.NODE_ENV !== 'production' ||
-    process.env.ENABLE_SWAGGER === 'true'
-  ) {
-    // Optional: protect Swagger with a basic password
-    const SWAGGER_USER = process.env.SWAGGER_USER || 'admin';
-    const SWAGGER_PASS = process.env.SWAGGER_PASS || 'password';
+  SwaggerModule.setup('api-docs', app, document, {
+    swaggerOptions: {
+      defaultModelsExpandDepth: -1, // hides schema models for cleaner view
+    },
+  });
 
-    // Basic Auth middleware for Swagger
-    app.use(['/api-docs'], (req, res, next) => {
-      const auth = { login: SWAGGER_USER, password: SWAGGER_PASS };
+  console.log(`📘 Swagger is always available at /api-docs`);
 
-      const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
-      const [login, password] = Buffer.from(b64auth, 'base64')
-        .toString()
-        .split(':');
-
-      if (login && password && login === auth.login && password === auth.password) {
-        return next();
-      }
-
-      res.set('WWW-Authenticate', 'Basic realm="401"');
-      res.status(401).send('Authentication required.');
-    });
-
-    SwaggerModule.setup('api-docs', app, document, {
-      swaggerOptions: {
-        defaultModelsExpandDepth: -1, // hides schema models for cleaner UI
-      },
-    });
-
-    console.log(
-      `📘 Swagger running at http://localhost:${process.env.PORT || 3000}/api-docs`,
-    );
-  }
-
-  // ✅ Render-compatible host and port
+  // Use Render-compatible port
   const PORT = process.env.PORT || 3000;
   await app.listen(PORT, '0.0.0.0');
-
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 }
 

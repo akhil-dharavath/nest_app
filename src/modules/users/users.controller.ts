@@ -165,4 +165,52 @@ export class UsersController {
       });
     }
   }
+
+  @Post('filter')
+  async filterUsers(
+    @Body()
+    body: {
+      role?: string;
+      search?: string;
+      tenant?: string;
+      page?: number;
+      limit?: number;
+    },
+    @Headers('authorization') authHeader: string,
+    @Res() res: Response,
+  ) {
+    try {
+      if (!authHeader?.startsWith('Bearer '))
+        throw new Error('Missing Bearer token');
+
+      const token = authHeader.split(' ')[1];
+      await this.authService.verifyToken(token);
+
+      const { role, search, tenant, page = 1, limit = 10 } = body;
+
+      const data = await this.usersService.filterUsers({
+        role,
+        search,
+        tenant,
+        page,
+        limit,
+      });
+
+      return res.status(HttpStatus.OK).json({
+        status: HttpStatus.OK,
+        statusCode: 'UC_FLT_001',
+        message: 'Users filtered successfully',
+        data,
+        error: null,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        status: HttpStatus.BAD_REQUEST,
+        statusCode: 'UC_FLT_002',
+        message: error.message || 'Filtering failed',
+        data: null,
+        error,
+      });
+    }
+  }
 }

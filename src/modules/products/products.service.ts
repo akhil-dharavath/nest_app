@@ -103,4 +103,60 @@ export class ProductsService {
     const deleted = await this.productModel.findByIdAndDelete(id).exec();
     if (!deleted) throw new NotFoundException('Product not found');
   }
+
+  async filterProducts({
+    merchentId,
+    category,
+    status,
+    search,
+    page,
+    limit,
+  }: {
+    merchentId?: string;
+    category?: string;
+    status?: string;
+    search?: string;
+    page: number;
+    limit: number;
+  }) {
+    const skip = (page - 1) * limit;
+
+    const query: any = {};
+
+    // Filter by merchentId
+    if (merchentId) {
+      query.merchentId = merchentId;
+    }
+
+    // Filter by category
+    if (category) {
+      query.category = category;
+    }
+
+    // Filter by product status
+    if (status) {
+      query.status = status;
+    }
+
+    // Search: name, SKU, category
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { sku: { $regex: search, $options: 'i' } },
+        { category: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const [data, total] = await Promise.all([
+      this.productModel.find(query).skip(skip).limit(limit),
+      this.productModel.countDocuments(query),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
 }

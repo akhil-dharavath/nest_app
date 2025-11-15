@@ -123,7 +123,12 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiExtraModels,
+} from '@nestjs/swagger';
 
 @Controller('products')
 export class ProductsController {
@@ -280,6 +285,66 @@ export class ProductsController {
       return this.buildResponse(
         HttpStatus.BAD_REQUEST,
         'Failed to delete product',
+        null,
+        error.message,
+      );
+    }
+  }
+
+  @Post('filter')
+  @ApiConsumes('application/json')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        merchentId: { type: 'string' },
+        category: { type: 'string' },
+        status: { type: 'string' },
+        search: { type: 'string' },
+        page: { type: 'number', default: 1 },
+        limit: { type: 'number', default: 10 },
+      },
+    },
+  })
+  async filterProducts(
+    @Body()
+    query: {
+      merchentId?: string;
+      category?: string;
+      status?: string;
+      search?: string;
+      page?: number;
+      limit?: number;
+    },
+  ) {
+    try {
+      const {
+        merchentId,
+        category,
+        status,
+        search,
+        page = 1,
+        limit = 10,
+      } = query;
+
+      const result = await this.productsService.filterProducts({
+        merchentId,
+        category,
+        status,
+        search,
+        page,
+        limit,
+      });
+
+      return this.buildResponse(
+        HttpStatus.OK,
+        'Filtered products fetched successfully',
+        result,
+      );
+    } catch (error) {
+      return this.buildResponse(
+        HttpStatus.BAD_REQUEST,
+        'Failed to filter products',
         null,
         error.message,
       );

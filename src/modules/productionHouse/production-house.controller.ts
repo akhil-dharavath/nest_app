@@ -28,7 +28,12 @@ export class ProductionHouseController {
     private readonly fieldValidator: FieldValidatorService,
   ) {}
 
-  private buildResponse(status: number, message: string, data?: any, error?: string) {
+  private buildResponse(
+    status: number,
+    message: string,
+    data?: any,
+    error?: string,
+  ) {
     return { status, message, data: data ?? null, error: error ?? null };
   }
 
@@ -37,9 +42,18 @@ export class ProductionHouseController {
   async getAll() {
     try {
       const data = await this.productionHouseService.getAllProductionHouses();
-      return this.buildResponse(HttpStatus.OK, 'Production houses fetched successfully', data);
+      return this.buildResponse(
+        HttpStatus.OK,
+        'Production houses fetched successfully',
+        data,
+      );
     } catch (error) {
-      return this.buildResponse(HttpStatus.BAD_REQUEST, 'Failed to fetch production houses', null, error.message);
+      return this.buildResponse(
+        HttpStatus.BAD_REQUEST,
+        'Failed to fetch production houses',
+        null,
+        error.message,
+      );
     }
   }
 
@@ -48,9 +62,18 @@ export class ProductionHouseController {
   async getById(@Param('id') id: string) {
     try {
       const data = await this.productionHouseService.getProductionHouseById(id);
-      return this.buildResponse(HttpStatus.OK, 'Production house fetched successfully', data);
+      return this.buildResponse(
+        HttpStatus.OK,
+        'Production house fetched successfully',
+        data,
+      );
     } catch (error) {
-      return this.buildResponse(HttpStatus.BAD_REQUEST, 'Failed to fetch production house', null, error.message);
+      return this.buildResponse(
+        HttpStatus.BAD_REQUEST,
+        'Failed to fetch production house',
+        null,
+        error.message,
+      );
     }
   }
 
@@ -70,16 +93,30 @@ export class ProductionHouseController {
     @Body() dto: CreateProductionHouseDto,
   ) {
     try {
-      this.fieldValidator.validateRequiredFields(dto, ['userId', 'name', 'subdomain', 'contactEmail']);
+      this.fieldValidator.validateRequiredFields(dto, [
+        'userId',
+        'name',
+        'subdomain',
+        'contactEmail',
+      ]);
 
       if (logo) {
         dto.logo = logo.filename; // or upload URL
       }
 
       const data = await this.productionHouseService.createProductionHouse(dto);
-      return this.buildResponse(HttpStatus.OK, 'Production house created successfully', data);
+      return this.buildResponse(
+        HttpStatus.OK,
+        'Production house created successfully',
+        data,
+      );
     } catch (error) {
-      return this.buildResponse(HttpStatus.BAD_REQUEST, 'Failed to create production house', null, error.message);
+      return this.buildResponse(
+        HttpStatus.BAD_REQUEST,
+        'Failed to create production house',
+        null,
+        error.message,
+      );
     }
   }
 
@@ -95,10 +132,22 @@ export class ProductionHouseController {
   ) {
     try {
       if (logo) dto.logo = logo.filename;
-      const data = await this.productionHouseService.updateProductionHouse(id, dto);
-      return this.buildResponse(HttpStatus.OK, 'Production house updated successfully', data);
+      const data = await this.productionHouseService.updateProductionHouse(
+        id,
+        dto,
+      );
+      return this.buildResponse(
+        HttpStatus.OK,
+        'Production house updated successfully',
+        data,
+      );
     } catch (error) {
-      return this.buildResponse(HttpStatus.BAD_REQUEST, 'Failed to update production house', null, error.message);
+      return this.buildResponse(
+        HttpStatus.BAD_REQUEST,
+        'Failed to update production house',
+        null,
+        error.message,
+      );
     }
   }
 
@@ -109,9 +158,64 @@ export class ProductionHouseController {
   async delete(@Param('id') id: string) {
     try {
       await this.productionHouseService.deleteProductionHouse(id);
-      return this.buildResponse(HttpStatus.OK, 'Production house deleted successfully');
+      return this.buildResponse(
+        HttpStatus.OK,
+        'Production house deleted successfully',
+      );
     } catch (error) {
-      return this.buildResponse(HttpStatus.BAD_REQUEST, 'Failed to delete production house', null, error.message);
+      return this.buildResponse(
+        HttpStatus.BAD_REQUEST,
+        'Failed to delete production house',
+        null,
+        error.message,
+      );
+    }
+  }
+
+  @Post('filter')
+  @ApiConsumes('application/json')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        page: { type: 'number', default: 1 },
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        userId: { type: 'string' }, // optional filter
+      },
+    },
+  })
+  async filterProductionHouses(
+    @Body()
+    query: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      userId?: string;
+    },
+  ) {
+    try {
+      const { page = 1, limit = 10, search, userId } = query;
+
+      const result = await this.productionHouseService.filterProductionHouses({
+        page,
+        limit,
+        search,
+        userId,
+      });
+
+      return this.buildResponse(
+        HttpStatus.OK,
+        'Filtered production houses fetched successfully',
+        result,
+      );
+    } catch (error) {
+      return this.buildResponse(
+        HttpStatus.BAD_REQUEST,
+        'Failed to filter production houses',
+        null,
+        error.message,
+      );
     }
   }
 }

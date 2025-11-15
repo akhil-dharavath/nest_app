@@ -1,4 +1,7 @@
 
+0.1.5
+- added filters
+
 0.1.4
 - removed bucket in firebase and using admin details
 

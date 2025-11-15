@@ -86,7 +86,7 @@
 //     });
 
 //     console.log(
-//       `📘 Swagger running at http://localhost:${process.env.PORT || 3000}/api-docs`,
+//       `Swagger running at http://localhost:${process.env.PORT || 3000}/api-docs`,
 //     );
 //   }
 
@@ -127,7 +127,7 @@ async function bootstrap() {
     }),
   );
 
-  // ✅ Always enable Swagger
+  // Always enable Swagger
   const config = new DocumentBuilder()
     .setTitle('API Documentation')
     .setDescription('Endpoints for Users, Products, Merchants, and Auth')
@@ -143,12 +143,12 @@ async function bootstrap() {
     },
   });
 
-  console.log(`📘 Swagger is always available at /api-docs`);
+  console.log(`Swagger is always available at /api-docs`);
 
   // Use Render-compatible port
   const PORT = process.env.PORT || 3000;
   await app.listen(PORT, '0.0.0.0');
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 }
 
 bootstrap();

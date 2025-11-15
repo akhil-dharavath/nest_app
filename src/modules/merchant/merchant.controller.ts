@@ -295,4 +295,62 @@ export class MerchantController {
       );
     }
   }
+
+  @Post('filter')
+  @ApiConsumes('application/json')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        search: { type: 'string' },
+        category: { type: 'string' },
+        genres: { type: 'string' },
+        status: { type: 'string', enum: ['Active', 'Inactive'] },
+        minRating: { type: 'number' },
+        maxRating: { type: 'number' },
+        startDate: { type: 'string', format: 'date' },
+        endDate: { type: 'string', format: 'date' },
+        page: { type: 'number', default: 1 },
+        limit: { type: 'number', default: 10 },
+      },
+    },
+  })
+  async filterMerchants(
+    @Body()
+    body: {
+      search?: string;
+      category?: string;
+      genres?: string;
+      status?: string;
+      minRating?: number;
+      maxRating?: number;
+      startDate?: string;
+      endDate?: string;
+      page?: number;
+      limit?: number;
+    },
+  ) {
+    try {
+      const { page = 1, limit = 10 } = body;
+
+      const result = await this.merchantService.filterMerchants({
+        ...body,
+        page,
+        limit,
+      });
+
+      return this.buildResponse(
+        HttpStatus.OK,
+        'Filtered merchants fetched successfully',
+        result,
+      );
+    } catch (error) {
+      return this.buildResponse(
+        HttpStatus.BAD_REQUEST,
+        'Failed to filter merchants',
+        null,
+        error.message,
+      );
+    }
+  }
 }

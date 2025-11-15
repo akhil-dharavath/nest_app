@@ -77,4 +77,53 @@ export class UsersService {
     const users = await this.userModel.findById(id).select('-password');
     return users;
   }
+
+  async filterUsers({
+    role,
+    search,
+    tenant,
+    page,
+    limit,
+  }: {
+    role?: string;
+    search?: string;
+    tenant?: string;
+    page: number;
+    limit: number;
+  }) {
+    const skip = (page - 1) * limit;
+
+    const query: any = {};
+
+    // Filter by role
+    if (role) {
+      query.role = role;
+    }
+
+    // Filter by tenant
+    if (tenant) {
+      query.tenant = tenant;
+    }
+
+    // Search: username, email, phoneNumber
+    if (search) {
+      query.$or = [
+        { username: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { phoneNumber: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const [data, total] = await Promise.all([
+      this.userModel.find(query).skip(skip).limit(limit),
+      this.userModel.countDocuments(query),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
 }

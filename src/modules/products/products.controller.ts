@@ -69,7 +69,7 @@
 //       ]);
 
 //       const product = await this.productsService.createProduct(dto);
-//       return this.buildResponse(HttpStatus.CREATED, 'Product created successfully', product);
+//       return this.buildResponse(HttpStatus.OK, 'Product created successfully', product);
 //     } catch (error) {
 //       return this.buildResponse(HttpStatus.BAD_REQUEST, 'Failed to create product', null, error.message);
 //     }
@@ -220,7 +220,7 @@ export class ProductsController {
       const product = await this.productsService.createProduct(dto, files);
 
       return {
-        statusCode: HttpStatus.CREATED,
+        statusCode: HttpStatus.OK,
         message: 'Product created successfully',
         data: product,
       };

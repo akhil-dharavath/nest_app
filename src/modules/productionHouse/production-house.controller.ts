@@ -77,7 +77,7 @@ export class ProductionHouseController {
       }
 
       const data = await this.productionHouseService.createProductionHouse(dto);
-      return this.buildResponse(HttpStatus.CREATED, 'Production house created successfully', data);
+      return this.buildResponse(HttpStatus.OK, 'Production house created successfully', data);
     } catch (error) {
       return this.buildResponse(HttpStatus.BAD_REQUEST, 'Failed to create production house', null, error.message);
     }

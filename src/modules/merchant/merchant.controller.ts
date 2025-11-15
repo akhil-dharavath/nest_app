@@ -58,7 +58,7 @@ import { UploadService } from 'src/global-services/upload/upload.service';
 //     try {
 //       this.fieldValidator.validateRequiredFields(dto, ['userId', 'name', 'images']);
 //       const merchant = await this.merchantService.createMerchant(dto);
-//       return this.buildResponse(HttpStatus.CREATED, 'Merchant created successfully', merchant);
+//       return this.buildResponse(HttpStatus.OK, 'Merchant created successfully', merchant);
 //     } catch (error) {
 //       return this.buildResponse(HttpStatus.BAD_REQUEST, 'Failed to create merchant', null, error.message);
 //     }
@@ -231,7 +231,7 @@ export class MerchantController {
       const merchant = await this.merchantService.createMerchant(dto, files);
 
       return this.buildResponse(
-        HttpStatus.CREATED,
+        HttpStatus.OK,
         'Merchant created successfully',
         merchant,
       );

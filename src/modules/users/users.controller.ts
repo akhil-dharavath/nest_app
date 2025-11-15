@@ -54,8 +54,8 @@ export class UsersController {
 
       const user = await this.usersService.register(body);
 
-      return res.status(HttpStatus.CREATED).json({
-        status: HttpStatus.CREATED,
+      return res.status(HttpStatus.OK).json({
+        status: HttpStatus.OK,
         statusCode: 'UC_RG_001',
         message: 'User registered successfully',
         data: user,

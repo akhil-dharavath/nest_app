@@ -1,4 +1,7 @@
 
+0.1.4
+- removed bucket in firebase and using admin details
+
 0.1.3
 - updates in swagger payloads
 
